@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <utility>
+#include <string>
 
 class Example1
 {
@@ -19,25 +20,37 @@ private:
 	unsigned int vbo = 0;
 	unsigned int shaderProgram = 0;
 
-	const char* vertexShaderSource = "#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"void main()\n"
-		"{\n"
-		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-		"}\0";
+	const char* vertexShaderSource = R"glsl(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+out vec4 vectorColor;
 
-	const char* fragmentShaderSource = "#version 330 core\n"
-		"out vec4 FragColor;\n"
-		"void main()\n"
-		"{\n"
-		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-		"}\n\0";
+void main()
+{
+	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+	vectorColor = vec4(0.5, 0.0, 0.0, 1.0);
+}
+	)glsl";
+
+	const char* fragmentShaderSource = R"glsl(
+#version 330 core
+out vec4 FragColor;
+in vec4 vectorColor;
+uniform vec4 ourColor;
+void main()
+{
+	// FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+	// FragColor = vectorColor;
+	FragColor = ourColor;
+}
+)glsl";
 
 	unsigned int CompileVertexShader();
 	unsigned int CompileFragmentShader();
 	unsigned int CreateShaderProgram();
 
 	std::pair<unsigned int, unsigned int> CreateVertexBufferAndArrayObjects();
+	int vertexColorLocation;
 
 public:
 	void Init();

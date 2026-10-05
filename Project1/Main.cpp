@@ -11,6 +11,8 @@
 
 #include "Example1.h"
 #include "Example2.h"
+#include "Example3.h"
+#include "Example3.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -74,6 +76,10 @@ int main()
     if (!LoadOpenGLFunctions())
         return -1;
 
+    int nrAttributes;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+    std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -93,10 +99,14 @@ int main()
     Example2 ex2;
     ex2.Init();
 
+
+    Example3 ex3;
+    ex3.Init();
+
     // uncomment to draw wireframe
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    bool drawTriangle = true;
+    bool drawTriangle = true, drawTriangle2 = false;
     bool drawRectangle = false;
     bool wireframe = false;
 
@@ -117,9 +127,9 @@ int main()
         ImGui::Text("Chapter: Hello Triangle");
         ImGui::Checkbox("Draw Triangle", &drawTriangle);
         ImGui::Checkbox("Draw Rectangle", &drawRectangle);
+        ImGui::Checkbox("Draw Triangle 2", &drawTriangle2);
         ImGui::Text("Exercises");
-        ImGui::Text("Chapter: Shaders");
-        ImGui::End();
+        ImGui::Text("Chapter: Shaders");        
 
         // ImGui::ShowDemoWindow(); // Show demo window! :)
 
@@ -139,6 +149,11 @@ int main()
         if(drawRectangle)
             ex2.Draw();
 
+        if (drawTriangle2)
+            ex3.Draw();
+
+        ImGui::End();
+
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -154,7 +169,7 @@ int main()
     //glDeleteProgram(shaderProgram);
     ex1.Destroy();
     ex2.Destroy();
-
+    ex3.Destroy();
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

@@ -1,4 +1,5 @@
 #include "Example1.h"
+#include <imgui.h>
 
 
 unsigned int Example1::CompileVertexShader() {
@@ -68,23 +69,41 @@ unsigned int Example1::CreateShaderProgram() {
 
 std::pair<unsigned int, unsigned int> Example1::CreateVertexBufferAndArrayObjects() {
     unsigned int VBO, VAO;
-    glGenVertexArrays(1, &VAO);
+    // create buffer 
     glGenBuffers(1, &VBO);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+
+    // create vertex array
+    glGenVertexArrays(1, &VAO);
+
+    // use vertex array
     glBindVertexArray(VAO);
 
+    // use buffer
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    // copy data to gpu-ram (internally it might just be copying (lazily) data into opengl managed buffer, not necessarily gpu ram)
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // define buffer structure, define the structure/layout of vertex attribute 0
+    glVertexAttribPointer(
+        0,                  // attribute location
+        3,                  // number of components
+        GL_FLOAT,           // component type
+        GL_FALSE,           // don't normalize
+        3 * sizeof(float),  // stride (how many bytes it should move forward in the buffer to find the next vertex)
+        (void*)0            // offset
+    );
+
+    // Enable vertex attribute 0
     glEnableVertexAttribArray(0);
 
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+    // the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object 
+    // so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
+
     return { VBO, VAO };
 }
 
@@ -94,11 +113,23 @@ void Example1::Init()
     auto [VBO, VAO] = CreateVertexBufferAndArrayObjects();
     vbo = VBO;
     vao = VAO;
+    vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
 }
 
 void Example1::Draw()
 {
     glUseProgram(shaderProgram);
+
+    static ImGuiColorEditFlags base_flags = ImGuiColorEditFlags_None;
+    static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 200.0f / 255.0f);
+
+    ImGui::ColorEdit3("MyColor##1", (float*)&color, base_flags);
+    
+    float timeValue = glfwGetTime();
+    float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+    float redValue = (cos(timeValue) / 2.0f) + 0.5f;
+    glUniform4f(vertexColorLocation, color.x, color.y, color.z, 1.0f);
+
     glBindVertexArray(vao); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
