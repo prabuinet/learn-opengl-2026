@@ -12,7 +12,7 @@
 #include "Example1.h"
 #include "Example2.h"
 #include "Example3.h"
-#include "Example3.h"
+#include "Example4.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -103,10 +103,13 @@ int main()
     Example3 ex3;
     ex3.Init();
 
+    Example4 ex4;
+    ex4.Init();
+
     // uncomment to draw wireframe
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    bool drawTriangle = true, drawTriangle2 = false;
+    bool drawTriangle = false, drawTriangle2 = false, drawTexture1 = true;
     bool drawRectangle = false;
     bool wireframe = false;
 
@@ -124,12 +127,6 @@ int main()
 
         ImGui::Begin("Hello OpenGL");
         ImGui::Checkbox("WireFrame", &wireframe);
-        ImGui::Text("Chapter: Hello Triangle");
-        ImGui::Checkbox("Draw Triangle", &drawTriangle);
-        ImGui::Checkbox("Draw Rectangle", &drawRectangle);
-        ImGui::Checkbox("Draw Triangle 2", &drawTriangle2);
-        ImGui::Text("Exercises");
-        ImGui::Text("Chapter: Shaders");        
 
         // ImGui::ShowDemoWindow(); // Show demo window! :)
 
@@ -143,14 +140,21 @@ int main()
 
         // drawTriangle(shaderProgram, VAO);
         // drawRectangle(shaderProgram, VAO);
+        ImGui::Checkbox("Draw Triangle", &drawTriangle);
         if(drawTriangle)
             ex1.Draw();
 
+        ImGui::Checkbox("Draw Rectangle", &drawRectangle);
         if(drawRectangle)
             ex2.Draw();
 
+        ImGui::Checkbox("Draw Triangle 2", &drawTriangle2);
         if (drawTriangle2)
             ex3.Draw();
+
+        ImGui::Checkbox("Texture 1", &drawTexture1);
+        if (drawTexture1)
+            ex4.Draw();
 
         ImGui::End();
 

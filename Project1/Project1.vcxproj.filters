@@ -60,15 +60,21 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\stb_image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Example4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="README.md" />
     <None Include="imgui\misc\debuggers\imgui.natstepfilter" />
-    <None Include="shaders\example3.fs.frag">
+    <None Include="shaders\example3.shader">
       <Filter>Source Files\shaders</Filter>
     </None>
-    <None Include="shaders\example3.vs.frag">
+    <None Include="shaders\example4.shader">
       <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>
@@ -113,6 +119,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Example4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

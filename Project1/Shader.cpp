@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include <sstream>
 
 // utility function for checking shader compilation/linking errors.
     // ------------------------------------------------------------------------
@@ -26,28 +27,40 @@ void Shader::CheckCompileErrors(unsigned int shader, std::string type)
     }
 }
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath)
+Shader::Shader(const char* filepath)
 {
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
     std::string fragmentCode;
-    std::ifstream vShaderFile;
-    std::ifstream fShaderFile;
-    // ensure ifstream objects can throw exceptions:
-    vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+    std::ifstream shaderFile;
+
     try
     {
-        // open files
-        vShaderFile.open(vertexPath);
-        fShaderFile.open(fragmentPath);
+        shaderFile.open(filepath);
         std::stringstream vShaderStream, fShaderStream;
-        // read file's buffer contents into streams
-        vShaderStream << vShaderFile.rdbuf();
-        fShaderStream << fShaderFile.rdbuf();
+
+        ShaderType shaderType = ShaderType::None;
+
+        std::string line;
+        while (std::getline(shaderFile, line)) {
+            if (line.find("#shader") == 0) {
+                if (line.find("fragment") != std::string::npos) {
+                    shaderType = ShaderType::Fragment;
+                }
+                else if (line.find("vertex") != std::string::npos) {
+                    shaderType = ShaderType::Vertex;
+                }
+            }
+            else if (shaderType == ShaderType::Fragment)
+                fShaderStream << line << '\n';
+            else if (shaderType == ShaderType::Vertex)
+                vShaderStream << line << '\n';
+        }
+
         // close file handlers
-        vShaderFile.close();
-        fShaderFile.close();
+        shaderFile.close();
+
         // convert stream into string
         vertexCode = vShaderStream.str();
         fragmentCode = fShaderStream.str();
@@ -56,8 +69,10 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     {
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << std::endl;
     }
+
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
+
     // 2. compile shaders
     unsigned int vertex, fragment;
     // vertex shader
@@ -79,7 +94,6 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
     glDeleteShader(fragment);
-
 }
 
 void Shader::use()

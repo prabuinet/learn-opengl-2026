@@ -7,6 +7,12 @@
 #include <sstream>
 #include <iostream>
 
+enum class ShaderType
+{
+    None,
+    Fragment,
+    Vertex,
+};
 
 class Shader
 {
@@ -19,7 +25,7 @@ public:
 
 
     // constructor reads and builds the shader
-    Shader(const char* vertexPath, const char* fragmentPath);
+    Shader(const char* filepath);
     ~Shader();
     // use/activate the shader
     void use();

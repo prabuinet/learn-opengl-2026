@@ -2,8 +2,6 @@
 
 #include "Example3.h"
 
-
-
 std::pair<unsigned int, unsigned int> Example3::CreateVertexBufferAndArrayObjects() {
     unsigned int VBO, VAO;
     // create buffer 
@@ -57,7 +55,7 @@ std::pair<unsigned int, unsigned int> Example3::CreateVertexBufferAndArrayObject
 
 void Example3::Init()
 {
-    shader = std::make_unique<Shader>("shaders/example3.vs.frag", "shaders/example3.fs.frag");    
+    shader = std::make_unique<Shader>("shaders/example3.shader");
     auto [VBO, VAO] = CreateVertexBufferAndArrayObjects();
     vbo = VBO;
     vao = VAO;
